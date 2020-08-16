@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>console小游戏</title>
+</head>
+
+<body>
+
+    <p><b>控制台小游戏</b></p>
+    <span>通过在console控制台输入startGame(),进入游戏</span>
+    <span>通过小键盘的上下左右进行小车的移动躲避子弹</span>
+
+
+    <script>
+        // 画布内数组
+        let result = new Array();
+        // 背景画布长宽
+        const bg = {
+            width: 5,
+            height: 5
+        }
+
+        // 在控制台输入start，进入游戏
+        window.startGame = function () {
+
+            // 初始化画布
+            /*
+            row  行   
+            col  列
+            x[0][0] x[0][1] x[0][2] x[0][3] x[0][4] 
+            x[1][0] x[1][1] x[1][2] x[1][3] x[1][4] 
+            x[2][0] x[2][1] x[2][2] x[2][3] x[2][4] 
+            x[3][0] x[3][1] x[3][2] x[3][3] x[3][4] 
+            x[4][0] x[4][1] x[4][2] x[4][3] x[4][4] 
+           
+            */
+            // x[0]  x[1]...x[4] 每一列
+            for (let x = 0; x < bg.height; x++) {
+                // 列的数量
+                let col = new Array();
+                // x[0][0] x[0][1]...x[0][4]
+                // 填充每一行的数据
+                for (let y = 0; y < bg.width; y++) {
+                    col[y] = "🎁";
+                }
+                // 将每一行填充好的数据填充进result数组的每一列里，形成二维数组
+                result[x] = col;
+
+            }
+
+            // 用户位置
+            let userX = 2;
+            let userY = result.length - 1;
+            let ud = 0;
+
+            // console.log(userY)
+
+            // 初始化用户位置
+            // 定位到数组的最后一行
+            // result[result.length - 1][userX] = "🚗";
+            result[userY][userX] = "🚗";
+
+            // 开始游戏后，等待2s再进行游戏的渲染，方便用户准备
+            setTimeout(() => {
+
+                // 每隔1s执行一次，打印画布
+                let game = setInterval(() => {
+
+
+                    // 删除最后一行数组，达到向上移动的效果
+                    result.pop();
+
+                    userY = result.length - 1 + ud;
+                    // lastY = userY - ud;
+                    // 想要判定输赢，就是在重新定位玩家的时候，检测此位置上是否有子弹，有则输了 
+                    //  并且还要加上判断是否为爆照效果，因为要防止下1s刷新无法进去结束语句，导致继续刷新，产生用户的位置
+                    // if (result[result.length - 1][userX] === "🚀" || result[result.length - 1][userX] === "🎇") {
+                    if (result[userY][userX] === "🚀" || result[userY][userX] === "🎇") {
+
+                        // 延迟1s结束 setTimeout 延时几秒后再执行里面的操作
+                        setTimeout(() => {
+
+                            // 发生碰撞就把用户的位置换成爆炸效果
+                            // result[result.length - 1][userX] = "🎇";
+                            result[userY][userX] = "🎇";
+                            // 播放音效
+                            // new Audio("./music/123.mp3").play();
+
+                            //结束定时器的执行
+                            clearInterval(game);
+
+                            // 清除打印的画布等
+                            // console.clear();
+                            // 通过%c进行css设置
+                            console.log("%cOVER", "color:red; font-size:48px");
+
+
+                        }, 200)
+                    }
+                    // 重新定位玩家的位置
+                    else {
+                        // result[result.length - 1][userX] = "🚗";
+
+
+                        result[userY][userX] = "🚗";
+
+                        // console.log(userY)
+                    }
+
+
+
+                    // 在头部行添加一行新的
+                    // new Array(5).fill("🎁") 快速添加5个数组值，内容在fill里填充
+                    result.unshift(new Array(bg.width).fill("🎁"))
+
+                    // 生成随机子弹
+                    result[0][parseInt(Math.random() * bg.width)] = "🚀";
+
+
+
+                    // 要把result转成字符串打印就不会有数组的样式了
+                    let str = ""
+                    // result的每一行
+                    for (let row = 0; row < result.length; row++) {
+                        let colstr = "";
+                        // result的每一行的数据，一共col行
+                        for (let col = 0; col < result[row].length; col++) {
+                            // 把每一行每一列的数据保存给colstr
+                            colstr += result[row][col];
+
+                        }
+                        // 每循环完一行，就加一个\n
+                        str += colstr + "\n"
+                    }
+                    // 因为每次都会有数字提示打印了多少次，所以要不显示数字
+                    // 所以，清空控制台在打印，就不有重复的数字了
+                    // console.clear()
+                    // 打印画布
+                    console.log(str)
+
+                }, 1000)
+
+                // 键盘操作
+                window.onkeydown = function (e) {
+                    // e.keyCode === 37就是小键盘的左移键
+                    if (e.keyCode === 37 && userX > 0) {
+                        userX--;
+                    }
+                    else if (e.keyCode === 39 && userX < bg.width - 1) {
+                        userX++;
+                    }
+                    else if (e.keyCode === 40 && ud < 0) {
+                        ud++;
+                    }
+                    else if (e.keyCode === 38 && ud > -(bg.height - 1)) {
+
+
+                        ud--;
+                    }
+                }
+
+            }, 2000)
+
+
+        }
+
+
+
+
+
+    </script>
+</body>
+
+</html>
