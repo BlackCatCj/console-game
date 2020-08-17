@@ -54,9 +54,9 @@
             // 用户位置
             let userX = 2;
             let userY = result.length - 1;
+            // 上下移动的距离个数，以改变小车的上下位置
             let ud = 0;
 
-            // console.log(userY)
 
             // 初始化用户位置
             // 定位到数组的最后一行
@@ -94,7 +94,7 @@
                             clearInterval(game);
 
                             // 清除打印的画布等
-                            // console.clear();
+                            console.clear();
                             // 通过%c进行css设置
                             console.log("%cOVER", "color:red; font-size:48px");
 
@@ -133,7 +133,7 @@
                     }
                     // 因为每次都会有数字提示打印了多少次，所以要不显示数字
                     // 所以，清空控制台在打印，就不有重复的数字了
-                    // console.clear()
+                    console.clear()
                     // 打印画布
                     console.log(str)
 
